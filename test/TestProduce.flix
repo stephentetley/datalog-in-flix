@@ -14,30 +14,20 @@
  * limitations under the License.
  */
 
-mod MiniDatalog.Syntax { 
 
+mod TestProduce {
+    
     use MiniDatalog.Syntax.Atom.{Atom}
+    use MiniDatalog.Syntax.Rule.{Rule}
+    use MiniDatalog.Syntax.Term.{Var, Sym}
 
-    pub type alias Program = List[Rule] 
+    @test
+    def produce01(): Unit \ IO = 
+        let rule = Rule( Atom("p", Vector#{Var("X"), Var("Z")}) 
+                        , Atom("p", Vector#{Var("X"), Var("Y")}) :: Atom("p", Vector#{Var("Y"), Var("Z")}) :: Nil);
+        let facts = Atom("p", Vector#{Sym("a"), Sym("b")}) ::  Atom("p", Vector#{Sym("b"), Sym("c")}) :: Nil;
+        println("produce01:");
+        MiniDatalog.Produce.produce(rule, facts) |> println
 
-    pub enum Rule with Eq, Order, ToString {
-        case Rule(Atom, List[Atom])
-    }
-
-    pub type alias Fact = Atom
-
-    pub enum Atom with Eq, Order, ToString {
-        case Atom(String, Vector[Term])
-    }
-
-    pub enum Term with Eq, Order, ToString {
-        case Var(String)
-        case Sym(String)
-    }
-
-
-    pub def arity(a: Atom): Int32 = 
-        let Atom(_, v) = a;
-        Vector.length(v)
 
 }
