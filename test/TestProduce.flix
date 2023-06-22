@@ -25,8 +25,18 @@ mod TestProduce {
     def produce01(): Unit \ IO = 
         let rule = Rule( Atom("p", Vector#{Var("X"), Var("Z")}) 
                         , Atom("p", Vector#{Var("X"), Var("Y")}) :: Atom("p", Vector#{Var("Y"), Var("Z")}) :: Nil);
-        let facts = Atom("p", Vector#{Sym("a"), Sym("b")}) ::  Atom("p", Vector#{Sym("b"), Sym("c")}) :: Nil;
+        let facts = Atom("p", Vector#{Sym("a"), Sym("b")}) :: Atom("p", Vector#{Sym("b"), Sym("c")}) :: Nil;
         println("produce01:");
+        MiniDatalog.Produce.produce(rule, facts) |> println
+
+
+    /// This should produce None 
+    @test
+    def produce02(): Unit \ IO = 
+        let rule = Rule( Atom("p", Vector#{Var("X"), Var("Z")}) 
+                        , Atom("p", Vector#{Var("X"), Var("Y")}) :: Atom("p", Vector#{Var("Y"), Var("Z")}) :: Nil);
+        let facts = Atom("p", Vector#{Sym("b"), Sym("c")}) :: Atom("p", Vector#{Sym("a"), Sym("b")}) :: Nil;
+        println("produce02:");
         MiniDatalog.Produce.produce(rule, facts) |> println
 
 

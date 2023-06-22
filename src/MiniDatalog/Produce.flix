@@ -30,7 +30,7 @@ mod MiniDatalog.Produce {
         def loop(ls, fs, acc) = match (ls, fs) {
             case (l :: rest1, f :: rest2) => match mgu(l, f) {
                 case None         => None
-                case Some(substs) => loop(rest1, List.map(a1 -> lookupAtom(a1, substs), rest2), lookupAtom(acc, substs))
+                case Some(substs) => loop(List.map(a1 -> lookupAtom(a1, substs), rest1), rest2, lookupAtom(acc, substs))
             }
             case (_, _)           => Some(acc)
         };
