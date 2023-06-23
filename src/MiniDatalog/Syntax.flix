@@ -17,6 +17,7 @@
 mod MiniDatalog.Syntax { 
 
     use MiniDatalog.Syntax.Atom.{Atom}
+    use MiniDatalog.Syntax.Term.{Sym, Var}
 
     pub type alias Program = List[Rule] 
 
@@ -31,13 +32,22 @@ mod MiniDatalog.Syntax {
     }
 
     pub enum Term with Eq, Order, ToString {
-        case Var(String)
         case Sym(String)
+        case Var(String)
     }
 
 
     pub def arity(a: Atom): Int32 = 
         let Atom(_, v) = a;
         Vector.length(v)
+
+    pub def groundTerm(t: Term): Bool = match t {
+        case Sym(_) => true
+        case Var(_) => false
+    }
+
+    pub def groundAtom(a: Atom): Bool = 
+        let Atom(_, v) = a;
+        Vector.forAll(groundTerm, v)
 
 }
