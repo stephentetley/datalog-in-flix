@@ -26,6 +26,7 @@ mod MiniDatalog.Produce {
     use MiniDatalog.Substitution.{lookupAtom}
     use MiniDatalog.MGU.{mgu}
 
+    /// Return value must be a ground fact.
     pub def produce(rule: Rule, facts: List[Fact]): Option[Fact] = 
         let Rule(head, body) = rule;
         def loop(ls, fs, acc) = match (ls, fs) {

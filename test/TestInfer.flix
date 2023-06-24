@@ -37,5 +37,19 @@ mod TestInfer {
         MiniDatalog.Infer.infer1(rules, facts) |> println
 
 
+    @test
+    def infer01(): Unit \ IO = 
+        let r1 = Rule(Atom("p", Vector#{Var("X"), Var("Z")}) 
+                        , Atom("p", Vector#{Var("X"), Var("Y")}) :: Atom("p", Vector#{Var("Y"), Var("Z")}) :: Nil);
+        let r2 = Rule(Atom("p", Vector#{Var("X"), Var("Y")}) 
+                        , Atom("p", Vector#{Var("Y"), Var("X")}) :: Nil);
+        let facts = 
+            Atom(       "p", Vector#{Sym("a"), Sym("b")})
+                :: Atom("p", Vector#{Sym("b"), Sym("c")})
+                :: Atom("p", Vector#{Sym("c"), Sym("d")})
+                :: Atom("p", Vector#{Sym("d"), Sym("e")}) :: Nil;
+        let rules = r1 :: r2 :: Nil;
+        println("infer01:");
+        MiniDatalog.Infer.infer(rules, facts) |> List.forEach(println)
 
 }

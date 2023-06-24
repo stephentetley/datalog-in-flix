@@ -23,20 +23,38 @@ mod MiniDatalog.Infer {
     use MiniDatalog.Syntax.Rule.{Rule}
     use MiniDatalog.Syntax.{groundAtom}
     use MiniDatalog.Produce.{produce}
-    // use MiniDatalog.MGU.{mgu}
+
+
+    pub def infer(rules: List[Rule], facts: List[Atom]): List[Fact] = 
+        def loop(s, k) = {
+            let snew = union(s, infer1(rules, s));
+            if (snew == s) k(snew) else loop(snew, k)
+        };
+        loop(facts, identity)
+
 
     /// TODO - I'm not sure what the inner FOR EACH in Ceri, et al is doing. 
     /// `loop` looks at successive list tails which does produce the same answer (for the test data)
-    pub def infer1(rules: List[Rule], facts: List[Atom]): Set[Fact] = 
+    pub def infer1(rules: List[Rule], facts: List[Atom]): List[Fact] = 
         let groundFacts = List.filter(groundAtom, facts);
         def loop(vs, r, acc) = match vs { 
             case _ :: rest => match produce(r, vs) {
-                case Some(newfact) => loop(rest, r, Set.insert(newfact, acc))
+                case Some(newfact) => loop(rest, r, snoc(acc, newfact))
                 case None          => acc
             }
             case Nil       => acc
         };
         let ruleStep = (acc, r) -> loop(groundFacts, r, acc);
-        List.foldLeft(ruleStep, Set.empty(), rules)
+        List.foldLeft(ruleStep, Nil, rules)
+
+    def snoc(xs: List[Atom], x: Atom): List[Atom] = 
+        if (List.memberOf(x, xs)) xs else List.append(xs, x :: Nil) 
+
+    // def cons(x: Atom, xs: List[Atom]): List[Atom] = 
+    //     if (List.memberOf(x, xs)) xs else x :: xs
+
+    def union(xs: List[Atom], ys: List[Atom]): List[Atom] = 
+        List.foldLeft((acc, x) -> snoc(acc, x), xs, ys)
+
 
 }
