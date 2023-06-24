@@ -22,6 +22,7 @@ mod MiniDatalog.Produce {
     use MiniDatalog.Syntax.Rule
     use MiniDatalog.Syntax.Rule.{Rule}
     use MiniDatalog.Syntax.Term.{Var}
+    use MiniDatalog.Syntax.{groundAtom}
     use MiniDatalog.Substitution.{lookupAtom}
     use MiniDatalog.MGU.{mgu}
 
@@ -32,7 +33,7 @@ mod MiniDatalog.Produce {
                 case None         => None
                 case Some(substs) => loop(List.map(a1 -> lookupAtom(a1, substs), rest1), rest2, lookupAtom(acc, substs))
             }
-            case (_, _)           => Some(acc)
+            case (_, _)           => if (groundAtom(acc)) Some(acc) else None
         };
         loop(body, facts, head)
 

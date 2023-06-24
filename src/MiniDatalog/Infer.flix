@@ -25,17 +25,18 @@ mod MiniDatalog.Infer {
     use MiniDatalog.Produce.{produce}
     // use MiniDatalog.MGU.{mgu}
 
-    /// TODO - the inner FOR EACH appears to be indicating groupBy "phi" i.e. atom name...
-    /// We send a list if lists...
-    pub def infer1(rules: List[Rule], facts: List[List[Atom]]): Set[Fact] = 
-        let groundFacts = List.filterMap(xs -> match List.filter(groundAtom, xs) { 
-            case Nil => None
-            case xs1 => Some(xs1) 
-        }, facts);
-        let ruleStep = (acc, r) -> List.foldLeft((acc1, nfacts) -> match produce(r, nfacts) {
-            case Some(newfact) => Set.insert(newfact, acc1)
-            case None => acc1
-        }, acc, groundFacts);
+    /// TODO - I'm not sure what the inner FOR EACH in Ceri, et al is doing. 
+    /// `loop` looks at successive list tails which does produce the same answer (for the test data)
+    pub def infer1(rules: List[Rule], facts: List[Atom]): Set[Fact] = 
+        let groundFacts = List.filter(groundAtom, facts);
+        def loop(vs, r, acc) = match vs { 
+            case _ :: rest => match produce(r, vs) {
+                case Some(newfact) => loop(rest, r, Set.insert(newfact, acc))
+                case None          => acc
+            }
+            case Nil       => acc
+        };
+        let ruleStep = (acc, r) -> loop(groundFacts, r, acc);
         List.foldLeft(ruleStep, Set.empty(), rules)
 
 }
